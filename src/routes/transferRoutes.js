@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const Transfer = require('../models/transferModel');
-
 /**
  * @swagger
  * /transfer:
@@ -57,6 +56,7 @@ const Transfer = require('../models/transferModel');
  *                         type: string
  */
 
+
 router.get('/transfer', async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
@@ -80,6 +80,26 @@ router.get('/transfer', async (req, res) => {
         console.error(err);
         res.status(500).json({ message: 'Server error' });
     }
+});
+
+
+/**
+ * @swagger
+ * /transferall:
+ *   get:
+ *     summary: Get all USDT transfers
+ *     responses:
+ *       200:
+ *         description: List of all transfers
+ */
+router.get('/transferall', async (req, res, next) => {
+  try {
+    const limit = 150; 
+    const transfers = await Transfer.find().sort({ blockNumber: -1 }).limit(limit);
+    res.json(transfers);
+  } catch (err) {
+    next(err);
+  }
 });
 
 module.exports = router;
